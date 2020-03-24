@@ -9,9 +9,9 @@ CREATE TABLE user(
 
 CREATE TABLE post(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    anthor_id INTEGER NOT NULL,
+    author_id INTEGER NOT NULL,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
-    FOREIGN KEY (anthor_id) REFERENCES user (id)
+    FOREIGN KEY (author_id) REFERENCES user (id)
 );
