@@ -5,6 +5,7 @@ from flask import Flask
 def create_app(test_config=None):
     from . import db
     from . import auth
+    from . import blog
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -24,6 +25,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     app.register_blueprint(auth.bp)
+    app.register_blueprint(blog.bp)
 
     @app.route('/hello')
     def hello():
