@@ -1,7 +1,7 @@
 import sqlite3
 
 import pytest
-from ..db import get_db
+from flaskr.db import get_db
 
 
 def test_get_close_db(app):
