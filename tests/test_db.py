@@ -1,5 +1,6 @@
 import sqlite3
-
+import sys
+sys.path.append('../')
 import pytest
 from flaskr.db import get_db
 

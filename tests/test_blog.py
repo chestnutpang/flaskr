@@ -1,4 +1,6 @@
 import pytest
+import sys
+sys.path.append('../')
 from flaskr.db import get_db
 
 

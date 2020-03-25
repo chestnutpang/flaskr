@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 from flaskr. import create_app
 
 
