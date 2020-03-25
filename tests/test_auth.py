@@ -14,7 +14,7 @@ def test_register(client, app):
 
     with app.app_context():
         assert get_db().execute(
-            'select * from user where username= = "a"',
+            'select * from user where username == "a"',
         ).fetchone() is not None
 
 
@@ -54,8 +54,9 @@ def test_login_validate_input(auth, username, password, message):
 
 
 def test_logout(client, auth):
-    auth.logout()
+    auth.login()
 
     with client:
+        # 注销后 session 不包含 user_id
         auth.logout()
         assert 'user_id' not in session
