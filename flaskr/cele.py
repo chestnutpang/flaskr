@@ -1,6 +1,5 @@
 from celery import Celery
 celery_app = None
-from logging import getLogger
 
 
 def init_celery(app):

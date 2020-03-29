@@ -10,6 +10,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
+        'celery'
     ],
 )
 # python 还需要 MANIFEST.in 文件来说明这些文件又哪些
