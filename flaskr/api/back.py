@@ -7,7 +7,7 @@ bp = Blueprint('back', __name__)
 celery_task = get_celery()
 
 
-@bp.route('/back')
+@bp.route('/test')
 def back():
     task = celery_task.add.delay(10, 20)
     print(task.ready())

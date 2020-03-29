@@ -26,13 +26,13 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+    print('init ext')
     db.init_app(app)
     cele.init_celery(app)
     app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
-    app.register_blueprint(back.bp)
-
+    app.register_blueprint(back.bp, url_prefix='/back')
+    print('init ext success')
     @app.route('/hello')
     def hello():
         return 'Hello World!'
