@@ -7,7 +7,7 @@ def create_app(test_config=None):
     from flaskr.api import auth
     from flaskr.api import blog
     from flaskr.api import back
-    from . import cele
+    from flaskr.celery_app import cele
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(

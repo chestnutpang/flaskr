@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flaskr.api.celery_task import add
+from flaskr.celery_app.celery_task import add
 bp = Blueprint('back', __name__)
 
 
