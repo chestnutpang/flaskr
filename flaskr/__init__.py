@@ -5,8 +5,10 @@ from celery import Celery
 
 def create_app(test_config=None):
     from . import db
-    from . import auth
-    from . import blog
+    from flaskr.api import auth
+    from flaskr.api import blog
+    from flaskr.api import back
+    from . import cele
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -15,8 +17,6 @@ def create_app(test_config=None):
         CELERY_BROKER_URL='redis://loaclhost:6379/0',
         CELERY_RESULT_BACKEND='redis://localhost:6379/0'
     )
-    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-    celery.conf.update(app.config)
 
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)
@@ -29,8 +29,10 @@ def create_app(test_config=None):
         pass
 
     db.init_app(app)
+    cele.init_celery(app)
     app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
+    app.register_blueprint(back.bp)
 
     @app.route('/hello')
     def hello():
