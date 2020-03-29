@@ -1,8 +1,10 @@
 from flask import Blueprint
 # from celery.bootsteps import Blueprint
-from flaskr.api import celery_task
+from flaskr.cele import get_celery
 
 bp = Blueprint('back', __name__)
+
+celery_task = get_celery()
 
 
 @bp.route('/back')

@@ -1,6 +1,5 @@
 import os
 from flask import Flask
-from celery import Celery
 
 
 def create_app(test_config=None):
