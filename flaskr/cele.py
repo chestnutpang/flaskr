@@ -1,13 +1,11 @@
 from celery import Celery
-celery_app = None
+from flaskr.config import flaskConfig
 
 
-def init_celery(app):
-    global celery_app
-    celery_app = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-    print('init celery success >>>')
-    celery_app.conf.update(app.config)
+celery_app = Celery(
+    'flask_Celery',
+    broker=flaskConfig.CELERY_BROKER_URL,
+    backend=flaskConfig.CELERY_RESULT_BACKEND
+)
 
 
-def get_celery():
-    return celery_app

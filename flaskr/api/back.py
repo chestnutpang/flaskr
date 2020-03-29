@@ -12,5 +12,3 @@ def back():
     task = celery_task.add.delay(10, 20)
     print(task.ready())
     return 'task_progress'
-
-
