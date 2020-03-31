@@ -1,11 +1,11 @@
 from celery import Celery
-from flaskr.config import flaskConfig
+from flaskr.config import Config
 
 
 celery_app = Celery(
     'flask_Celery',
-    broker=flaskConfig.CELERY_BROKER_URL,
-    backend=flaskConfig.CELERY_RESULT_BACKEND,
+    broker=Config.CELERY_BROKER_URL,
+    backend=Config.CELERY_RESULT_BACKEND,
     include=['flaskr.celery_app.celery_task']
 )
 

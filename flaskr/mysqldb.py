@@ -3,9 +3,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime
 from datetime import datetime
-import uuid
-
-
 Base = declarative_base()
 
 
@@ -13,9 +10,10 @@ class DatabaseConnect:
     session = None
 
     @classmethod
-    def init(cls, user, password, port, db):
-        uri = f'mysql_pymysql://{user}:{password}:{port}/{db}'
+    def init(cls, user, password, host, port, db):
+        uri = f'mysql+pymysql://{user}:{password}@{host}:{port}/{db}'
         engine = create_engine(uri)
+        Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
         DBSession = sessionmaker(bind=engine)
         cls.session = DBSession()
@@ -29,9 +27,10 @@ class DatabaseConnect:
 
 
 class DbBase(Base):
-    id = Column(String, default=uuid.uuid4().hex, primary_key=True)
-    _createdAt = Column(DateTime, default=datetime.now())
-    _updatedAt = Column(DateTime, default=datetime.now())
+    __abstract__ = True
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    createdAt = Column(DateTime, default=datetime.now())
+    updatedAt = Column(DateTime, default=datetime.now())
 
     def save(self):
         session = DatabaseConnect.get_session()

@@ -1,36 +1,38 @@
 import os
 from flask import Flask
+from flaskr.database import init_db
+from flaskr.config import Config
 
 
 def create_app(test_config=None):
     from . import db
-    from flaskr.api import auth
+    from flaskr.api import user
     from flaskr.api import blog
     from flaskr.api import back
     from flaskr.celery_app import cele
 
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-    )
-
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        app.config.from_mapping(test_config)
+    # app.config['SECRET_KEY'] = 'dev'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = ''
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    app.config.from_object(Config)
+    # if test_config is None:
+    #     app.config.from_pyfile('config.py', silent=True)
+    # else:
+    #     app.config.from_mapping(test_config)
 
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    db.init_app(app)
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(user.bp)
     app.register_blueprint(blog.bp)
     app.register_blueprint(back.bp, url_prefix='/back')
     @app.route('/hello')
     def hello():
         return 'Hello World!'
+
+    init_db(app)
 
     return app
 
