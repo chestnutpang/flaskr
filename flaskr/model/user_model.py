@@ -3,13 +3,14 @@
 # from sqlalchemy import Column, String, Integer, VARCHAR
 # from flaskr.mysqldb import DbBase, DatabaseConnect
 from flaskr.database import DbBase, db
+from flask import g
 
 
 class User(DbBase):
     __tablename__ = 'User'
     username = db.Column(db.VARCHAR(12), nullable=False)
     password = db.Column(db.VARCHAR(12), nullable=False)
-    blog = db.relationship('Blog')
+    # blog = db.relationship('Blog')
 
     def __init__(self, username, password):
         self.username = username
@@ -22,6 +23,7 @@ class User(DbBase):
             raise ValueError
         if user.password != password:
             raise ValueError
+        g.user = user.id
         return user
 
     @classmethod

@@ -15,7 +15,7 @@ class DbBase(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, auto_increment=True)
     createdAt = db.Column(db.DateTime, default=datetime.now())
-    updatedAt = db.Column(db.DateTime, default=datetime.now())
+    updatedAt = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     def save(self):
         print(db.session)
@@ -26,3 +26,7 @@ class DbBase(db.Model):
     def save_all(cls, data_list):
         db.session.add_all(data_list)
         db.session.commit()
+
+    @property
+    def _id(self):
+        return self.id

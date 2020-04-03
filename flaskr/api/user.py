@@ -33,7 +33,9 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.login(username, password)
-        session['user_id'] = user.id
+        print(user._id, '>>>_id')
+        session['user_id'] = user._id
+        print(session)
         return '1'
         # if user is None:
         #     error = 'Incorrect username.'
@@ -41,27 +43,36 @@ def login():
         #     error = 'Incorrect password.'
 
 
-@bp.before_app_request
-def load_logged_in_user():
-    user_id = session.get('user_id')
+# @bp.before_app_request
+# def load_logged_in_user():
+#     user_id = session.get('user_id')
+#
+#     if user_id is None:
+#         g.user = None
+#     else:
+#         g.user = User.check_id(user_id)
 
-    if user_id is None:
-        g.user = None
-    else:
-        g.user = User.check_id(user_id)
 
-
-@bp.route('logout')
+@bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('blog.index'))
 
 
-# 验证登录态的装饰器
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
-        return view(**kwargs)
-    return wrapped_view
+# # 验证登录态的装饰器
+# def login_required(view):
+#     @functools.wraps(view)
+#     def wrapped_view(**kwargs):
+#         if g.user is None:
+#             return redirect(url_for('auth.login'))
+#         return view(**kwargs)
+#     return wrapped_view
+
+
+from flaskr import comm
+
+@bp.route('/test_login', methods=['GET'])
+@comm.login_required
+def test_login():
+    print(session)
+    return 'yes'

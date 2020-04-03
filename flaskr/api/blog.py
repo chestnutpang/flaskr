@@ -4,9 +4,10 @@ from flask import (
 
 from werkzeug.exceptions import abort
 
-from flaskr.api.user import login_required
 # from flaskr.db import get_db
 from flaskr.model import *
+from flaskr import comm
+
 bp = Blueprint('blog', __name__)
 
 
@@ -63,7 +64,7 @@ def get_post(_id, check_author=True):
 
 
 @bp.route('/<int:_id>/update', methods=['GET', 'POST'])
-@login_required
+# @comm.login_required
 def update(_id):
     post = get_post(_id)
 
@@ -90,7 +91,7 @@ def update(_id):
 
 
 @bp.route('/<int:_id>/delete', methods=['POST'])
-@login_required
+# @comm.login_required
 def delete(_id):
     get_post(_id)
     db = get_db()
