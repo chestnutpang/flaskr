@@ -20,9 +20,9 @@ class User(DbBase):
     def login(cls, username, password):
         user = cls.query.filter_by(username=username).first()
         if user is None:
-            raise ValueError
+            return None
         if user.password != password:
-            raise ValueError
+            return None
         g.user = user.id
         return user
 

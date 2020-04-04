@@ -14,17 +14,18 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
+        error = None
         if not username:
-            raise ValueError('username is required.')
+            error = 'username is required.'
         elif not password:
-            raise ValueError('password is required.')
-
-        user = User(username, password)
-        user.save()
-        return 'register success'
-    #     flash(error)
-    return 'hahaha'
+            error = 'password is required.'
+        if error is None:
+            user = User(username, password)
+            user.save()
+            return redirect(url_for('auth.login'))
+        else:
+            flash(error)
+    return render_template('auth/register.html')
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -33,24 +34,23 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.login(username, password)
-        print(user._id, '>>>_id')
-        session['user_id'] = user._id
-        print(session)
-        return '1'
-        # if user is None:
-        #     error = 'Incorrect username.'
-        # elif not check_password_hash(user['password'], password):
-        #     error = 'Incorrect password.'
+        if user is None:
+            error = '账号或密码不正确'
+        else:
+            session.clear()
+            session['user_id'] = user._id
+            return redirect(url_for('blog.index'))
+        flash(error)
+    return render_template('auth/login.html')
 
+@bp.before_app_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
 
-# @bp.before_app_request
-# def load_logged_in_user():
-#     user_id = session.get('user_id')
-#
-#     if user_id is None:
-#         g.user = None
-#     else:
-#         g.user = User.check_id(user_id)
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = User.check_id(user_id)
 
 
 @bp.route('/logout')

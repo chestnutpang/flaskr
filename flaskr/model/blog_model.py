@@ -7,9 +7,9 @@ class Blog(DbBase):
     __tablename__ = 'Blog'
     title = db.Column(db.VARCHAR(20), nullable=False)
     content = db.Column(db.VARCHAR(500), nullable=False)
-    # user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('User.id'))
 
-    def __init__(self, title, content, user):
+    def __init__(self, title, content, user_id):
         self.title = title
         self.content = content
-        # self.user_id = user
+        self.author_id = user_id

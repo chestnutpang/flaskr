@@ -19,11 +19,12 @@ def index():
     #     ' FROM post p JOIN user u ON p.author_id = u.id'
     #     ' ORDER BY created DESC'
     # ).fetchall()
-    posts = []
-    return render_template('blog/index.html', posts=posts)
+    blog_list = Blog.query.join(User, User.id == Blog.author_id).all()
+    return render_template('blog/index.html', posts=blog_list)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
+@comm.login_required
 def create():
     if request.method == 'POST':
         title = request.form['title']
@@ -35,36 +36,39 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
-            )
-            db.commit()
+            # db.execute(
+            #     'INSERT INTO post (title, body, author_id)'
+            #     ' VALUES (?, ?, ?)',
+            #     (title, body, g.user['id'])
+            # )
+            # db.commit()
+            print()
+            new_blog = Blog(title, body, g.user._id)
+            new_blog.save()
             return redirect(url_for('blog.index'))
     return render_template('blog/create.html')
 
 
 # 更新或删除时获取 blog 的对象
 def get_post(_id, check_author=True):
-    post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
-        (_id,)
-    ).fetchone()
 
-    if post is None:
+    # post = get_db().execute(
+    #     'SELECT p.id, title, body, created, author_id, username'
+    #     ' FROM post p JOIN user u ON p.author_id = u.id'
+    #     ' WHERE p.id = ?',
+    #     (_id,)
+    # ).fetchone()
+    blog = Blog.query.join(User, User.id == Blog.author_id).filter(Blog.author_id == _id).one()
+    if blog is None:
         abort(404, f'Post id {_id} doesn\'t exist.')
-    if check_author and post['author_id'] != g.user['id']:
+    if check_author and blog.author_id != g.user.id:
         abort(403)
 
-    return post
+    return blog
 
 
 @bp.route('/<int:_id>/update', methods=['GET', 'POST'])
-# @comm.login_required
+@comm.login_required
 def update(_id):
     post = get_post(_id)
 
@@ -79,19 +83,19 @@ def update(_id):
             flash(error)
 
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE post SET title = ?, body = ?'
-                ' WHERE id = ?',
-                (title, body, _id)
-            )
-            db.commit()
+            # db = get_db()
+            # db.execute(
+            #     'UPDATE post SET title = ?, body = ?'
+            #     ' WHERE id = ?',
+            #     (title, body, _id)
+            # )
+            # db.commit()
             return redirect(url_for('blog.index'))
     return render_template('blog/update.html', post=post)
 
 
 @bp.route('/<int:_id>/delete', methods=['POST'])
-# @comm.login_required
+@comm.login_required
 def delete(_id):
     get_post(_id)
     db = get_db()
