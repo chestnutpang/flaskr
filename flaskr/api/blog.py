@@ -58,7 +58,7 @@ def get_post(_id, check_author=True):
     #     ' WHERE p.id = ?',
     #     (_id,)
     # ).fetchone()
-    blog = Blog.query.join(User, User.id == Blog.author_id).filter(Blog.author_id == _id).one()
+    blog = Blog.query.join(User, User.id == Blog.author_id).filter(Blog.id == _id).one()
     if blog is None:
         abort(404, f'Post id {_id} doesn\'t exist.')
     if check_author and blog.author_id != g.user.id:
@@ -70,7 +70,7 @@ def get_post(_id, check_author=True):
 @bp.route('/<int:_id>/update', methods=['GET', 'POST'])
 @comm.login_required
 def update(_id):
-    post = get_post(_id)
+    blog = get_post(_id)
 
     if request.method == 'POST':
         title = request.form['title']
@@ -90,17 +90,26 @@ def update(_id):
             #     (title, body, _id)
             # )
             # db.commit()
+            blog.title = title
+            blog.content = body
+            blog.save()
             return redirect(url_for('blog.index'))
-    return render_template('blog/update.html', post=post)
+    return render_template('blog/update.html', post=blog)
+
+
+@bp.route('/<int:_id>/content', methods=['GET'])
+def content(_id):
+    blog = Blog.query.filter(Blog.id == _id).one()
+    return render_template('blog/content.html', post=blog)
 
 
 @bp.route('/<int:_id>/delete', methods=['POST'])
 @comm.login_required
 def delete(_id):
-    get_post(_id)
-    db = get_db()
-    db.execute(
-        'DELETE FROM post WHERE id = ?', (_id, )
-    )
-    db.commit()
+    blog = get_post(_id)
+    # db = get_db()
+    # db.execute(
+    #     'DELETE FROM post WHERE id = ?', (_id, )
+    # )
+    Blog.remove(blog)
     return redirect(url_for('blog.index'))
