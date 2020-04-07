@@ -1,12 +1,11 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
-
 from werkzeug.exceptions import abort
-
 # from flaskr.db import get_db
 from flaskr.model import *
 from flaskr import comm
+from flaskr.redisutils import RedisConn
 
 bp = Blueprint('blog', __name__)
 
@@ -42,7 +41,6 @@ def create():
             #     (title, body, g.user['id'])
             # )
             # db.commit()
-            print()
             new_blog = Blog(title, body, g.user._id)
             new_blog.save()
             return redirect(url_for('blog.index'))
@@ -100,7 +98,22 @@ def update(_id):
 @bp.route('/<int:_id>/content', methods=['GET'])
 def content(_id):
     blog = Blog.query.filter(Blog.id == _id).one()
-    return render_template('blog/content.html', post=blog)
+    conn = RedisConn.get_redis_conn()
+    like = conn.get(f'blog_{_id}')
+    if like is None:
+        conn.set(f'blog_{_id}', 0)
+        like = 0
+    return render_template('blog/content.html', post=blog, like=like)
+
+
+@bp.route('/<int:_id>/like', methods=['POST'])
+def click_like(_id):
+    conn = RedisConn.get_redis_conn()
+    try:
+        conn.incr(f'blog_{_id}')
+    except AttributeError:
+        raise ValueError
+    return redirect(url_for('blog.content', _id=_id))
 
 
 @bp.route('/<int:_id>/delete', methods=['POST'])

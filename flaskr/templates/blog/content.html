@@ -12,6 +12,7 @@
       </div>
     <label for="body">Body</label>
     <div id="body">{{ request.form['body'] or post['content'] }}</div>
+    <button formmethod="post" formaction="http://localhost:5000/blog/{{ post['_id'] }}/like">like {{ like }}</button>
   </form>
   <hr>
 {% endblock %}
