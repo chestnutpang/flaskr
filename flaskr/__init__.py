@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flaskr.database import init_db
 from flaskr.config import Config
+from flaskr.handle_helper import *
 
 
 def create_app(test_config=None):
@@ -33,6 +34,10 @@ def create_app(test_config=None):
     def hello():
         return 'Hello World!'
 
+    app.route('/')(blog.index)
+    app.before_request(before_request)
+    app.after_request(after_request)
+    app.errorhandler(Exception)(error_handle)
     init_db(app)
     RedisConn.init(config.Config.REDIS_HOST, config.Config.REDIS_PORT,
                    config.Config.REDIS_PASSWORD, config.Config.REDIS_DB)

@@ -47,24 +47,6 @@ def create():
     return render_template('blog/create.html')
 
 
-# 更新或删除时获取 blog 的对象
-def get_post(_id, check_author=True):
-
-    # post = get_db().execute(
-    #     'SELECT p.id, title, body, created, author_id, username'
-    #     ' FROM post p JOIN user u ON p.author_id = u.id'
-    #     ' WHERE p.id = ?',
-    #     (_id,)
-    # ).fetchone()
-    blog = Blog.query.join(User, User.id == Blog.author_id).filter(Blog.id == _id).one()
-    if blog is None:
-        abort(404, f'Post id {_id} doesn\'t exist.')
-    if check_author and blog.author_id != g.user.id:
-        abort(403)
-
-    return blog
-
-
 @bp.route('/<int:_id>/update', methods=['GET', 'POST'])
 @comm.login_required
 def update(_id):
@@ -107,6 +89,7 @@ def content(_id):
 
 
 @bp.route('/<int:_id>/like', methods=['POST'])
+@comm.login_required
 def click_like(_id):
     conn = RedisConn.get_redis_conn()
     try:
@@ -126,3 +109,21 @@ def delete(_id):
     # )
     Blog.remove(blog)
     return redirect(url_for('blog.index'))
+
+
+# 更新或删除时获取 blog 的对象
+def get_post(_id, check_author=True):
+
+    # post = get_db().execute(
+    #     'SELECT p.id, title, body, created, author_id, username'
+    #     ' FROM post p JOIN user u ON p.author_id = u.id'
+    #     ' WHERE p.id = ?',
+    #     (_id,)
+    # ).fetchone()
+    blog = Blog.query.join(User, User.id == Blog.author_id).filter(Blog.id == _id).one()
+    if blog is None:
+        abort(404, f'Post id {_id} doesn\'t exist.')
+    if check_author and blog.author_id != g.user.id:
+        abort(403)
+
+    return blog

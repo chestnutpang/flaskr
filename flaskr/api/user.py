@@ -43,6 +43,7 @@ def login():
         flash(error)
     return render_template('auth/login.html')
 
+
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
