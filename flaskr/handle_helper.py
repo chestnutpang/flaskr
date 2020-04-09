@@ -11,6 +11,7 @@ def after_request(response):
 
 
 def error_handle(e):
+    print(e)
     if e.code == ErrorCode.LOGIN_REQUIRE[0]:
         return redirect(url_for('auth.login'))
     else:

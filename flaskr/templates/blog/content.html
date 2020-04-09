@@ -5,14 +5,17 @@
 {% endblock %}
 
 {% block content %}
+<a href="{{ url_for('blog.index') }}">index</a>
+<div>
+  <label for="title">Title</label>
+    <div id="title">
+        {{ request.form['title'] or post['title'] }}
+    </div>
+  <label for="body">Body</label>
+  <div id="body">{{ request.form['body'] or post['content'] }}</div>
   <form method="post">
-    <label for="title">Title</label>
-      <div id="title">
-          {{ request.form['title'] or post['title'] }}
-      </div>
-    <label for="body">Body</label>
-    <div id="body">{{ request.form['body'] or post['content'] }}</div>
-    <button formmethod="post" formaction="http://localhost:5000/blog/{{ post['_id'] }}/like">like {{ like }}</button>
+  <button formmethod="post" formaction="http://localhost:5000/blog/{{ post['_id'] }}/like">like {{ like }}</button>
   </form>
+</div>
   <hr>
 {% endblock %}

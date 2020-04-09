@@ -3,8 +3,9 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 # from flaskr.db import get_db
+from flaskr.exception import NormalError
 from flaskr.model import *
-from flaskr import comm
+from flaskr import comm, ErrorCode
 from flaskr.redisutils import RedisConn
 
 bp = Blueprint('blog', __name__)
@@ -81,9 +82,9 @@ def update(_id):
 def content(_id):
     blog = Blog.query.filter(Blog.id == _id).one()
     conn = RedisConn.get_redis_conn()
-    like = conn.get(f'blog_{_id}')
+    like = conn.scard(f'blog_{_id}')
     if like is None:
-        conn.set(f'blog_{_id}', 0)
+        # conn.set(f'blog_{_id}', 0)
         like = 0
     return render_template('blog/content.html', post=blog, like=like)
 
@@ -92,10 +93,13 @@ def content(_id):
 @comm.login_required
 def click_like(_id):
     conn = RedisConn.get_redis_conn()
-    try:
-        conn.incr(f'blog_{_id}')
-    except AttributeError:
-        raise ValueError
+    user_id = g.user._id
+    blog_key = f'blog_{_id}'
+    exist = conn.sismember(blog_key, user_id)
+    if exist:
+        conn.srem(blog_key, user_id)
+    else:
+        conn.sadd(blog_key, user_id)
     return redirect(url_for('blog.content', _id=_id))
 
 
