@@ -11,8 +11,13 @@ def after_request(response):
 
 
 def error_handle(e):
-    print(e)
-    if e.code == ErrorCode.LOGIN_REQUIRE[0]:
-        return redirect(url_for('auth.login'))
-    else:
-        return redirect(url_for('blog.index'))
+    print(e, type(e))
+    try:
+        if e.code == ErrorCode.LOGIN_REQUIRE[0]:
+            return redirect(url_for('auth.login'))
+        else:
+            return redirect(url_for('blog.index'))
+    except:
+        print('>>>>>>>>>>>>')
+        print(e)
+        print('>>>>>>>>>>>>')

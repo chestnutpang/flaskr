@@ -1,12 +1,13 @@
 import functools
-
+from flaskr.exception import NormalError
+from flaskr.err_code import ErrorCode
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-
 from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.model import *
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+from flaskr import comm
 
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -60,20 +61,22 @@ def logout():
     return redirect(url_for('blog.index'))
 
 
-# # 验证登录态的装饰器
-# def login_required(view):
-#     @functools.wraps(view)
-#     def wrapped_view(**kwargs):
-#         if g.user is None:
-#             return redirect(url_for('auth.login'))
-#         return view(**kwargs)
-#     return wrapped_view
-
-
-from flaskr import comm
-
 @bp.route('/test_login', methods=['GET'])
 @comm.login_required
 def test_login():
     print(session)
     return 'yes'
+
+
+@bp.route('/follow', methods=['POST'])
+@comm.login_required
+def follow():
+    params = request.get_json()
+    attend_user_id = params.get('attend')
+    attend_user = User.query.get(attend_user_id)
+    if attend_user is None:
+        raise NormalError(ErrorCode.COMM_ERROR)
+    user = User.query.get(g.user._id)
+    user.followed.append(attend_user)
+    user.save()
+    return {}

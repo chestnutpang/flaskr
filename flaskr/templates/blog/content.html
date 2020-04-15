@@ -2,6 +2,7 @@
 
 {% block header %}
   <h1>{% block title %}"{{ post['title'] }}"{% endblock %}</h1>
+  <a href="{{ url_for('blog.home', user_id=user['id']) }}">{{ user['nickname'] }}></a>
 {% endblock %}
 
 {% block content %}

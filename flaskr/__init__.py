@@ -37,7 +37,7 @@ def create_app(test_config=None):
     app.route('/')(blog.index)
     app.before_request(before_request)
     app.after_request(after_request)
-    app.errorhandler(Exception)(error_handle)
+    # app.errorhandler(Exception)(error_handle)
     init_db(app)
     RedisConn.init(config.Config.REDIS_HOST, config.Config.REDIS_PORT,
                    config.Config.REDIS_PASSWORD, config.Config.REDIS_DB)

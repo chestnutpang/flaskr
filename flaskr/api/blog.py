@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, session
 )
 from werkzeug.exceptions import abort
 # from flaskr.db import get_db
@@ -19,8 +19,28 @@ def index():
     #     ' FROM post p JOIN user u ON p.author_id = u.id'
     #     ' ORDER BY created DESC'
     # ).fetchall()
-    blog_list = Blog.query.join(User, User.id == Blog.author_id).all()
-    return render_template('blog/index.html', posts=blog_list)
+    user_id = session.get('user_id')
+    if user_id is None:
+        blog_list = Blog.query.all()
+        return render_template('blog/index.html', posts=blog_list)
+    else:
+        blog_list = Blog.query.all()
+        user = User.query.get(user_id)
+        print(user, '>>>>>>>>>>>>>')
+        return render_template('blog/index.html', posts=blog_list, user=user)
+
+
+@bp.route('/home/<user_id>', methods=['GET'])
+def home(user_id):
+    # db = get_db()
+    # posts = db.execute(
+    #     'SELECT p.id, title, body, created, author_id, username'
+    #     ' FROM post p JOIN user u ON p.author_id = u.id'
+    #     ' ORDER BY created DESC'
+    # ).fetchall()
+    blog_list = Blog.query.join(User, user_id == Blog.author_id).all()
+    user = User.query.get(user_id)
+    return render_template('blog/index.html', posts=blog_list, user=user)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
@@ -80,13 +100,13 @@ def update(_id):
 
 @bp.route('/<int:_id>/content', methods=['GET'])
 def content(_id):
-    blog = Blog.query.filter(Blog.id == _id).one()
+    blog = Blog.query.filter(Blog.id == _id).join(User, User.id == Blog.author_id).one()
     conn = RedisConn.get_redis_conn()
     like = conn.scard(f'blog_{_id}')
     if like is None:
         # conn.set(f'blog_{_id}', 0)
         like = 0
-    return render_template('blog/content.html', post=blog, like=like)
+    return render_template('blog/content.html', post=blog, like=like, user=blog.user)
 
 
 @bp.route('/<int:_id>/like', methods=['POST'])
