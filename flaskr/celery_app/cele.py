@@ -8,5 +8,3 @@ celery_app = Celery(
     backend=Config.CELERY_RESULT_BACKEND,
     include=['flaskr.celery_app.celery_task']
 )
-
-

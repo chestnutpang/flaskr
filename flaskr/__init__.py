@@ -6,10 +6,8 @@ from flaskr.handle_helper import *
 
 
 def create_app(test_config=None):
-    from . import db
-    from flaskr.api import user
-    from flaskr.api import blog
-    from flaskr.api import back
+    # from . import db
+    from flaskr.api import user, bill, blog, back
     from flaskr.celery_app import cele
     from flaskr.redisutils import RedisConn
 
@@ -30,6 +28,7 @@ def create_app(test_config=None):
     app.register_blueprint(user.bp)
     app.register_blueprint(blog.bp, url_prefix='/blog')
     app.register_blueprint(back.bp, url_prefix='/back')
+    app.register_blueprint(bill.bp, url_prefix='/bill')
     @app.route('/hello')
     def hello():
         return 'Hello World!'

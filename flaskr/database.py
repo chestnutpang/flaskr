@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from bson import ObjectId
 db = SQLAlchemy()
 
 
@@ -12,8 +11,7 @@ def init_db(app):
 
 class DbBase(db.Model):
     __abstract__ = True
-
-    id = db.Column(db.String(24), primary_key=True, default=str(ObjectId()))
+    id = db.Column(db.Integer, unique=True, autoincrement=True, primary_key=True)
     createdAt = db.Column(db.DateTime, default=datetime.now())
     updatedAt = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
@@ -31,6 +29,12 @@ class DbBase(db.Model):
     def save_all(cls, data_list):
         db.session.add_all(data_list)
         db.session.commit()
+
+    def set(self, key, value):
+        self.__setattr__(key, value)
+
+    def get(self, key):
+        return self.__getattribute__(key)
 
     @property
     def _id(self):

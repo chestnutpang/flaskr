@@ -26,7 +26,6 @@ def index():
     else:
         blog_list = Blog.query.all()
         user = User.query.get(user_id)
-        print(user, '>>>>>>>>>>>>>')
         return render_template('blog/index.html', posts=blog_list, user=user)
 
 

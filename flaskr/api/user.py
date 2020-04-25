@@ -6,8 +6,9 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.model import *
-bp = Blueprint('auth', __name__, url_prefix='/auth')
 from flaskr import comm
+
+bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/register', methods=['GET', 'POST'])

@@ -16,6 +16,7 @@ followers = db.Table(
 
 class User(DbBase):
     __tablename__ = 'User'
+
     id = db.Column(db.Integer, unique=True, autoincrement=True, primary_key=True)
     username = db.Column(db.VARCHAR(12), nullable=False)
     password = db.Column(db.VARCHAR(12), nullable=False)
