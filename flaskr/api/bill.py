@@ -55,7 +55,7 @@ def query_bill_list_year():
         month = int(params.get('month', 0))
         args.extend([model.Bill.day])
         bill_query = bill_query.filter(model.Bill.year == year, model.Bill.month == month)\
-            .group_by(model.Bill.day).with_entities(*args)
+            .group_by(model.Bill.record_time).with_entities(*args)
         record_time = f'{year}-{month}'
     else:
         raise NormalError(ErrorCode.COMM_ERROR)

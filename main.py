@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from flaskr import create_app
 
 
