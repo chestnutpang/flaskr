@@ -6,3 +6,4 @@ pyecharts==1.7.1
 PyMySQL==0.9.3
 Flask-SQLAlchemy==2.4.1
 gevent==1.4.0
+redis==3.4.1
