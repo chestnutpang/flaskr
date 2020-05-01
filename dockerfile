@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt -i https://pypi.doubanio.com/simple/
 
 COPY . .
 
-CMD ["main.py"]
+CMD ["./main.py"]
