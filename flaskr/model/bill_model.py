@@ -2,7 +2,7 @@ from flaskr.database import DbBase, db
 
 
 class Bill(DbBase):
-    __tablename__ = 'bill'
+    __tablename__ = 'Bill'
     record_type = db.Column(db.VARCHAR(20), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     alias = db.Column(db.VARCHAR(20), nullable=False)
@@ -27,7 +27,7 @@ class Bill(DbBase):
 
 
 class BillMod(DbBase):
-    __tablename__ = 'bill'
+    __tablename__ = 'BillMod'
     type = db.Column(db.VARCHAR(20), nullable=False)
     description = db.Column(db.VARCHAR(20), default=None)
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'))

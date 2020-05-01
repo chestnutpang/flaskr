@@ -1,5 +1,8 @@
 flask==1.1.1
 pytest==5.4.1
 coverage==5.0.4
-celery=4.4.2
-pyecharts=1.7.1
+celery==4.4.2
+pyecharts==1.7.1
+PyMySQL==0.9.3
+Flask-SQLAlchemy==2.4.1
+gevent==1.4.0
