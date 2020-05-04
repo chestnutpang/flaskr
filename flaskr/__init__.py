@@ -5,7 +5,6 @@ from flaskr.config import Config
 from flaskr.handle_helper import *
 from gevent.pywsgi import WSGIServer
 import logging
-import sys
 
 
 class Server:
